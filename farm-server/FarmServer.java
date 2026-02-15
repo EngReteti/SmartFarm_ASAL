@@ -1,36 +1,51 @@
 import java.io.*;
 import java.net.*;
 
-public class FarmServer {
-	    public static void main(String[] args) {
-	    	        int port = 5000; 
+/**
+ * FarmServer is the 'Brain' of our system.
+  * It stays awake and listens for data from our distributed farm sensors.
+   */
+   public class FarmServer {
+   	    public static void main(String[] args) {
+   	    	        int port = 5000; // This is the network 'door' the sensors will use
 
-	    	                try (ServerSocket serverSocket = new ServerSocket(port)) {
-	    	                	            System.out.println("Farm Server is active on port " + port);
+   	    	                // We open a ServerSocket to start listening on the chosen port
+   	    	                        try (ServerSocket serverSocket = new ServerSocket(port)) {
+   	    	                        	            System.out.println("Farm Server is active and listening on port " + port);
 
-	    	                	                                    while (true) {
-	    	                	                                    	                Socket socket = serverSocket.accept();
-	    	                	                                    	                                BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-	    	                	                                    	                                                String rawLine = reader.readLine();
+   	    	                        	                                    // This loop keeps the server running forever
+   	    	                        	                                                while (true) {
+   	    	                        	                                                	                // The server pauses here until a sensor 'calls' it
+   	    	                        	                                                	                                Socket socket = serverSocket.accept();
 
-	    	                	                                    	                                                                if (rawLine != null) {
-	    	                	                                    	                                                                	                    String[] data = rawLine.split(",");
-	    	                	                                    	                                                                	                                        if (data.length == 4) {
-	    	                	                                    	                                                                	                                        	                        FarmReport report = new FarmReport(data[0], data[1], data[2], data[3]);
-	    	                	                                    	                                                                	                                        	                                                report.display();
-	    	                	                                    	                                                                	                                        	                                                                    }
-	    	                	                                    	                                                                	                                        	                                                                                    }
-	    	                	                                    	                                                                	                                        	                                                                                                    socket.close(); 
-	    	                	                                    	                                                                	                                        	                                                                                                                }
-	    	                	                                    	                                                                	                                        	                                                                                                                        } catch (IOException e) {
-	    	                	                                    	                                                                	                                        	                                                                                                                        	            System.out.println("Error: " + e.getMessage());
-	    	                	                                    	                                                                	                                        	                                                                                                                        	                    }
-	    	                	                                    	                                                                	                                        	                                                                                                                        	                        }
-	    	                	                                    	                                                                	                                        	                                                                                                                        	                        }
-	    	                	                                    	                                                                	                                        	                                                                                                                        	                        
-	    	                	                                    	                                                                	                                        	                                                                                                                       
-	    	                	                                    	                                                                	                                        
-	    	                	                                  	                                                               
-	    	                	                                   
-	    	               
-	   
+   	    	                        	                                                	                                                                // We create a reader to 'hear' the message sent by the sensor
+   	    	                        	                                                	                                                                                BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+   	    	                        	                                                	                                                                                                String rawLine = reader.readLine();
+
+   	    	                        	                                                	                                                                                                                if (rawLine != null) {
+   	    	                        	                                                	                                                                                                                	                    // We split the message (CSV format) into 4 parts using commas
+   	    	                        	                                                	                                                                                                                	                                        String[] data = rawLine.split(",");
+
+   	    	                        	                                                	                                                                                                                	                                                                                if (data.length == 4) {
+   	    	                        	                                                	                                                                                                                	                                                                                	                        // We turn the raw text into a FarmReport object and show it
+   	    	                        	                                                	                                                                                                                	                                                                                	                                                FarmReport report = new FarmReport(data[0], data[1], data[2], data[3]);
+   	    	                        	                                                	                                                                                                                	                                                                                	                                                                        report.display();
+   	    	                        	                                                	                                                                                                                	                                                                                	                                                                                            }
+   	    	                        	                                                	                                                                                                                	                                                                                	                                                                                                            }
+   	    	                        	                                                	                                                                                                                	                                                                                	                                                                                                                            // We close the connection for this specific message to save battery/data
+   	    	                        	                                                	                                                                                                                	                                                                                	                                                                                                                                            socket.close(); 
+   	    	                        	                                                	                                                                                                                	                                                                                	                                                                                                                                                        }
+   	    	                        	                                                	                                                                                                                	                                                                                	                                                                                                                                                                } catch (IOException e) {
+   	    	                        	                                                	                                                                                                                	                                                                                	                                                                                                                                                                	            // If the network fails, we print the error here
+   	    	                        	                                                	                                                                                                                	                                                                                	                                                                                                                                                                	                        System.out.println("Connection Error: " + e.getMessage());
+   	    	                        	                                                	                                                                                                                	                                                                                	                                                                                                                                                                	                                }
+   	    	                        	                                                	                                                                                                                	                                                                                	                                                                                                                                                                	                                    }
+   	    	                        	                                                	                                                                                                                	                                                                                	                                                                                                                                                                	                                    }
+   	    	                        	                                                	                                                                                                                	                                                                                	                                                                                                                                                                	                                    
+   	    	                        	                                                	                                                                                                                	                                                                                	                                                                                                                                                               
+   	    	                        	                                                	                                                                                                                	                                                                               
+   	    	                        	                                                	                                                                                                              
+   	    	                        	                                              
+   	    	                      
+   	   
+   
