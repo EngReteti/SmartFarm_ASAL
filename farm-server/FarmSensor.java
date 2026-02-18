@@ -1,34 +1,35 @@
 import java.io.*;
 import java.net.*;
 
-/**
- * FarmSensor represents a remote device in the field.
-  * It connects to the FarmServer to send an update.
-   */
-   public class FarmSensor {
-   	    public static void main(String[] args) {
-   	    	        String serverAddress = "localhost"; // Since we are running on one phone
-   	    	                int port = 5000;
+public class FarmSensor {
+	    public static void main(String[] args) {
+	    	        String serverAddress = "localhost";
+	    	                int port = 5000;
+	    	                        String reportData = "COW_01,LIVESTOCK,Grazing,North_Pasture";
+	    	                                boolean sent = false;
 
-   	    	                        // The data we want to send: ID, Category, Status, Location
-   	    	                                String reportData = "COW_01,LIVESTOCK,Grazing,North_Pasture";
-
-   	    	                                        try (Socket socket = new Socket(serverAddress, port)) {
-   	    	                                        	            // Create a writer to send the data through the socket
-   	    	                                        	                        PrintWriter writer = new PrintWriter(socket.getOutputStream(), true);
-
-   	    	                                        	                                                // Send the data
-   	    	                                        	                                                            writer.println(reportData);
-
-   	    	                                        	                                                                                    System.out.println("Data sent successfully: " + reportData);
-
-   	    	                                        	                                                                                                        } catch (IOException e) {
-   	    	                                        	                                                                                                        	            System.out.println("Sensor Error: Could not connect to server. " + e.getMessage());
-   	    	                                        	                                                                                                        	                    }
-   	    	                                        	                                                                                                        	                        }
-   	    	                                        	                                                                                                        	                        }
-   	    	                                        	                                                                                                        	                        
-   	    	                                        	                                                                                                      
-   	    	                                       
-   	   
-   
+	    	                                        // Today's 2%: Loop until the server is found
+	    	                                                while (!sent) {
+	    	                                                	            try (Socket socket = new Socket(serverAddress, port)) {
+	    	                                                	            	                PrintWriter writer = new PrintWriter(socket.getOutputStream(), true);
+	    	                                                	            	                                writer.println(reportData);
+	    	                                                	            	                                                System.out.println("Status: Data successfully sent to hub.");
+	    	                                                	            	                                                                sent = true; // Break the loop
+	    	                                                	            	                                                                            } catch (IOException e) {
+	    	                                                	            	                                                                            	                System.out.println("Server unreachable. Retrying in 5 seconds...");
+	    	                                                	            	                                                                            	                                try {
+	    	                                                	            	                                                                            	                                	                    Thread.sleep(5000); // Wait 5 seconds before next attempt
+	    	                                                	            	                                                                            	                                	                                    } catch (InterruptedException ie) {
+	    	                                                	            	                                                                            	                                	                                    	                    Thread.currentThread().interrupt();
+	    	                                                	            	                                                                            	                                	                                    	                                    }
+	    	                                                	            	                                                                            	                                	                                    	                                                }
+	    	                                                	            	                                                                            	                                	                                    	                                                        }
+	    	                                                	            	                                                                            	                                	                                    	                                                            }
+	    	                                                	            	                                                                            	                                	                                    	                                                            }
+	    	                                                	            	                                                                            	                                	                                    	                                                            
+	    	                                                	            	                                                                            	                                	                                   
+	    	                                                	            	                                                                            	                           
+	    	                                                	            	                                                                        
+	    	                                                	       
+	    	                                              
+	
